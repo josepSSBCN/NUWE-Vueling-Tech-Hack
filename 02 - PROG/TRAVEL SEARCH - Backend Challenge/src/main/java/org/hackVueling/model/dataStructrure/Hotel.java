@@ -5,11 +5,26 @@ package org.hackVueling.model.dataStructrure;
  */
 public class Hotel {
     //region ATTRIBUTES
+    /**
+     * Hotel's id.
+     */
     private short id;
+    /**
+     * Hotel's name.
+     */
     private String name;
+    /**
+     * City's id of where the hotel is located.
+     */
     private short idCity;
+    /**
+     * City's name of where the hotel is located.
+     */
     private String cityName;
-    private byte category;
+    /**
+     * Category's id from EnumCategory.
+     */
+    private byte idCategory;
 
     //endregion ATTRIBUTES
 
@@ -24,7 +39,7 @@ public class Hotel {
         this.name = name;
         this.idCity = idCity;
         this.cityName = cityName;
-        this.category = category;
+        this.idCategory = category;
     }
 
     public Hotel (Hotel hotelIn){
@@ -32,7 +47,7 @@ public class Hotel {
         this.name = hotelIn.name;
         this.idCity = hotelIn.idCity;
         this.cityName = hotelIn.cityName;
-        this.category = hotelIn.category;
+        this.idCategory = hotelIn.idCategory;
     }
 
     //endregion CONSTRUCTOR
@@ -72,15 +87,14 @@ public class Hotel {
         this.cityName = cityName;
     }
 
-    public byte getCategory() {
-        return category;
+    public byte getIdCategory() {
+        return idCategory;
     }
 
-    public void setCategory(byte category) {
-        this.category = category;
+    public void setIdCategory(byte idCategory) {
+        this.idCategory = idCategory;
     }
 
     //endregion GETTERS & SETTERS
-
 
 }

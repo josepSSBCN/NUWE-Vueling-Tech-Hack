@@ -8,11 +8,26 @@ import java.util.List;
  */
 public class LandTrip {
     //region ATTRIBUTES
+    /**
+     * Land Trip's id.
+     */
     private short id;
+    /**
+     * Land trip's name.
+     */
     private String name;
+    /**
+     * Days of duration trip.
+     */
     private short tripDays;
-    private List<City> citiesVisited;
-    private List<Hotel> hotels;
+    /**
+     * List of the cities visited on trip.
+     */
+    private List<City> citiesVisited = new ArrayList<>();
+    /**
+     * List of the hotels of trip.
+     */
+    private List<Hotel> hotels = new ArrayList<>();
 
     //endregion ATTRIBUTES
 
@@ -26,15 +41,18 @@ public class LandTrip {
         this.id = id;
         this.name = name;
         this.tripDays = tripDays;
-        this.citiesVisited = new ArrayList<>(citiesVisited);
-        this.hotels = new ArrayList<>(hotels);
+        this.citiesVisited = ((citiesVisited != null) && citiesVisited.size() > 0) ? new ArrayList<>(citiesVisited) : new ArrayList<>();
+        this.hotels = ((hotels != null) && (hotels.size() > 0)) ? new ArrayList<>(hotels) : new ArrayList<>();
     }
 
     public LandTrip(LandTrip landTripsIn) {
         this.id = landTripsIn.id;
         this.name = landTripsIn.name;
         this.tripDays = landTripsIn.tripDays;
-        this.citiesVisited = new ArrayList<>(landTripsIn.citiesVisited);
+        this.citiesVisited = ((landTripsIn.citiesVisited != null) && (landTripsIn.citiesVisited.size() > 0)) ?
+                new ArrayList<>(citiesVisited) : new ArrayList<>();
+        this.hotels = ((landTripsIn.hotels != null) && (landTripsIn.hotels.size() > 0)) ?
+                new ArrayList<>(landTripsIn.hotels) : new ArrayList<>();
 
     }
 
@@ -91,21 +109,23 @@ public class LandTrip {
 
     /**
      * Method to add a hotel on the list.
+     *
      * @param hotelIn Hotel to add.
      */
-    public void addHotel(Hotel hotelIn){
-        if (hotelIn != null){
+    public void addHotel(Hotel hotelIn) {
+        if (hotelIn != null) {
             this.hotels.add(hotelIn);
         }
     }
 
     /**
      * Method to add a city on the list.
+     *
      * @param cityIn City to add.
      */
-    public void addCity(City cityIn){
+    public void addCity(City cityIn) {
         // todo s'ha de comprovar si ja existeix la ciutat?
-        if(cityIn != null){
+        if (cityIn != null) {
             this.citiesVisited.add(cityIn);
         }
     }

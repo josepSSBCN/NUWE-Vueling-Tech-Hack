@@ -10,7 +10,6 @@ public class SearchViewCls {
     private static SearchViewCls instance;
     private static SearchControlCls searchControlCls;
 
-
     //endregion ATTRIBUTES
 
 
@@ -53,11 +52,11 @@ public class SearchViewCls {
             if (!cityUserIn.equals("0")) {
                 // Check trips
                 text = searchControlCls.findTripsWithCityName(cityUserIn);
-                ShowResults(text);
+                ShowResults(text, cityUserIn);
             }
 
         } catch (Exception ex) {
-            System.out.println(ToolsViewCls.getLangText(2000));
+            ToolsViewCls.pressAnyKey(ToolsViewCls.getLangText(2000));
         }
 
         //endregion ACTIONS
@@ -68,20 +67,22 @@ public class SearchViewCls {
      * Method to show screen 'results found'.
      * @param tripsFound Text with results.
      */
-    public void ShowResults(String tripsFound) {
+    public void ShowResults(String tripsFound, String cityNameIn) {
         //region ACTIONS
         try {
             // SCREEN TITLE
             System.out.println(ToolsViewCls.title(ToolsViewCls.getShowResults()));
 
             // SCREEN BODY
-            System.out.println("\n" + tripsFound);
+            if (tripsFound.length()==0) {
+                tripsFound = ToolsViewCls.getLangText(201) + "'" + cityNameIn + "'.\n";
+            }
 
             // USER DATA IN
-            ToolsViewCls.pressAnyKey("");
+            ToolsViewCls.pressAnyKey("\n" + tripsFound);
 
         } catch (Exception ex) {
-            ToolsViewCls.getLangText(2000);
+            ToolsViewCls.pressAnyKey(ToolsViewCls.getLangText(2000));
         }
 
         //endregion ACTIONS

@@ -69,7 +69,7 @@ public class MainViewCls {
             } while (!exit);
 
         } catch (Exception ex) {
-            ToolsViewCls.getLangText(2001);
+            ToolsViewCls.pressAnyKey(ToolsViewCls.getLangText(2000));
         }
 
         //endregion ACTIONS
@@ -111,7 +111,7 @@ public class MainViewCls {
             }
 
         } catch (Exception ex) {
-            System.out.println(ToolsViewCls.getLangText(2000));
+            ToolsViewCls.pressAnyKey(ToolsViewCls.getLangText(2000));
         }
 
         //endregion ACTIONS

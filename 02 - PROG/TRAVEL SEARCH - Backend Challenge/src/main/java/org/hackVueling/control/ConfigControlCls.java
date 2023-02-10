@@ -1,13 +1,15 @@
 package org.hackVueling.control;
 
 import org.hackVueling.model.classes.ConfigModelCls;
-import org.hackVueling.model.dataStructrure.City;
-import org.hackVueling.model.dataStructrure.Flight;
-import org.hackVueling.model.dataStructrure.Hotel;
+import org.hackVueling.model.dataStructrure.*;
 
+import java.sql.SQLException;
 import java.sql.Time;
-import java.time.LocalTime;
+import java.util.List;
 
+/**
+ * Classe to control all actions of Configuration on Control layer.
+ */
 public class ConfigControlCls {
     //region ATTRIBUTES
     private static ConfigControlCls instance;
@@ -31,11 +33,6 @@ public class ConfigControlCls {
     //endregion CONSTRUCTOR
 
 
-    //region GETTERS & SETTERS
-
-    //endregion GETTERS & SETTERS
-
-
     //region METHODS ADD
 
     /**
@@ -47,8 +44,7 @@ public class ConfigControlCls {
      */
     public int addCity(String nameIn) {
         //region DEFINITION VARIABLES
-        boolean addedOk = false;
-        int resul = 0, existCity;
+        int resul, existCity;
         City cityNew = new City();
 
         //endregion DEFINITION VARIABLES
@@ -106,9 +102,9 @@ public class ConfigControlCls {
             if (cityExist > 0) {
                 // CREATE FLIGHT
                 flight.setCityDeparture(cityName);
-                flight.setIdCity((short)cityExist);
+                flight.setIdCity((short) cityExist);
                 flight.setDepartureTime(new Time(Integer.parseInt(departureTime.substring(0, 2)),
-                        Integer.parseInt(departureTime.substring(3, 5)), 00));
+                        Integer.parseInt(departureTime.substring(3, 5)), 0));
 
                 // ADD FLIGHT
                 resul = (configModelCls.addFLight(flight)) ? 0 : 3;
@@ -128,7 +124,6 @@ public class ConfigControlCls {
         // OUT
         return resul;
 
-
     }
 
     /**
@@ -141,8 +136,7 @@ public class ConfigControlCls {
      */
     public int addHotel(String hotelName, String cityName, int idCategory) {
         //region DEFINITION VARIABLES
-        boolean cityExist;
-        int resul = 0, idCity = 0;
+        int resul, idCity;
         Hotel newHotel = new Hotel();
 
         //endregion DEFINITION VARIABLES
@@ -155,7 +149,7 @@ public class ConfigControlCls {
                 // CREATE FLIGHT
                 newHotel.setName(hotelName);
                 newHotel.setCityName(cityName);
-                newHotel.setCategory((byte) idCategory);
+                newHotel.setIdCategory((byte) idCategory);
                 newHotel.setIdCity((short) idCity);
 
                 // ADD HOTEL
@@ -166,6 +160,149 @@ public class ConfigControlCls {
             }
         } catch (Exception ex) {
             resul = 3;
+        }
+        //endregion ACTIONS
+
+
+        // OUT
+        return resul;
+
+    }
+
+    /**
+     * Method to manage the Air Trip Creation.
+     *
+     * @param airTripIn Air Trip classe, to create.
+     * @param citiesNameListIn List of cities what Air Trip visited.
+     * @return 0 = added correctly; 1 = some error with DDBB; 2 = city class is null; 3 = citisNameList empty
+     */
+    public int addAirTrip(AirTrip airTripIn, List<String> citiesNameListIn) {
+        //region DEFINITION VARIABLES
+        boolean addResul, exitDo = false;
+        int resul = 0, step = 0;
+        City newCity;
+
+        //endregion DEFINITION VARIABLES
+
+
+        //region ACTIONS
+        try {
+            // INITIAL CHECKS
+            if (citiesNameListIn == null) {
+                resul = 2;
+            } else if (citiesNameListIn.size() == 0) {
+                resul = 3;
+            } else {
+                do {
+                    switch (step) {
+                        case 0 -> {         // CREATE CITY LIST, FROM CITIES NAMES
+                            for (String n : citiesNameListIn) {
+                                newCity = new City(configModelCls.getCity(n));
+                                if (newCity != null) airTripIn.addCity(newCity);
+                            }
+                            step = 1;
+                        }
+                        case 1 -> {         // ADD NEW AIR TRIP ON DDBB
+                            addResul = configModelCls.addAirTrip(airTripIn);
+                            airTripIn.setId(new AirTrip(configModelCls.getAirTrip(airTripIn)).getId());
+                            step = (airTripIn != null) ? ((addResul) ? 2 : 1000) : 1000;
+                        }
+                        case 2 -> {         // ADD LIST OF FLIGHTS ON DDBB
+                            addResul = true; ////* configModelCls.addAirTripFlights(airTripIn);
+                            step = (addResul) ? 3 : 1100;
+                        }
+                        case 3 -> {        // ADD LIST OF CITIES VISITED ON DDBB
+                            addResul = configModelCls.addAirTripCities(airTripIn);
+                            step = (addResul) ? 1100 : 1000;
+                        }
+                        case 1000 -> {      // SOME ERROR OCURRED
+                            resul = 1;
+                            exitDo = true;
+                        }
+                        case 1100 -> {      // ALL ADD CORRECTLY
+                            resul = 0;
+                            exitDo = true;
+                        }
+                        default -> {
+                            resul = 1;
+                            exitDo = true;
+                        }
+                    }
+                } while (!exitDo);
+            }
+        } catch (SQLException e) {
+            resul = 1;
+        }
+        //endregion ACTIONS
+
+
+        // OUT
+        return resul;
+
+    }
+
+    /**
+     * Method to manage the Air Trip Creation.
+     * @param landTripIn Land Trip classe, to create.
+     * @param citiesNameListIn List of cities what Land Trip visited.
+     * @return 0 = added correctly; 1 = some error with DDBB; 2 = city class is null; 3 = citisNameList empty
+     */
+    public int addLandTrip(LandTrip landTripIn, List<String> citiesNameListIn) {
+        //region DEFINITION VARIABLES
+        boolean addResul, exitDo = false;
+        int resul = 0, step = 0;
+        City newCity;
+
+        //endregion DEFINITION VARIABLES
+
+
+        //region ACTIONS
+        try {
+            // INITIAL CHECKS
+            if (citiesNameListIn == null) {
+                resul = 2;
+            } else if (citiesNameListIn.size() == 0) {
+                resul = 3;
+            } else {
+                do {
+                    switch (step) {
+                        case 0 -> {         // CREATE CITY LIST, FROM CITIES NAMES
+                            for (String n : citiesNameListIn) {
+                                newCity = new City(configModelCls.getCity(n));
+                                if (newCity != null) landTripIn.addCity(newCity);
+                            }
+                            step = 1;
+                        }
+                        case 1 -> {         // ADD NEW LAND TRIP ON DDBB
+                            addResul = configModelCls.addLandTrip(landTripIn);
+                            landTripIn.setId(new LandTrip(configModelCls.getLandTrip(landTripIn)).getId());
+                            step = (addResul) ? 2 : 1000;
+                        }
+                        case 2 -> {         // ADD LIST OF FLIGHTS ON DDBB
+                            addResul = true; ////* configModelCls.addAirTripFlights(airTripIn);
+                            step = (addResul) ? 3 : 1100;
+                        }
+                        case 3 -> {        // ADD LIST OF CITIES VISITED ON DDBB
+                            addResul = configModelCls.addLandTripCities(landTripIn);
+                            step = (addResul) ? 1100 : 1000;
+                        }
+                        case 1000 -> {      // SOME ERROR OCURRED
+                            resul = 1;
+                            exitDo = true;
+                        }
+                        case 1100 -> {      // ALL ADD CORRECTLY
+                            resul = 0;
+                            exitDo = true;
+                        }
+                        default -> {
+                            resul = 1;
+                            exitDo = true;
+                        }
+                    }
+                } while (!exitDo);
+            }
+        } catch (SQLException e) {
+            resul = 1;
         }
         //endregion ACTIONS
 
@@ -198,7 +335,7 @@ public class ConfigControlCls {
             if (!cityName.isEmpty() && !cityName.isBlank()) {
                 existCity = configModelCls.checkCityExist(cityName, true);
 
-                resul = (existCity >0) ? 0 : 2;
+                resul = (existCity > 0) ? 0 : 2;
             } else {
                 resul = 3;
             }
@@ -222,7 +359,7 @@ public class ConfigControlCls {
      */
     public int checkTrip(String tripName) {
         //region DEFINITION VARIABLES
-        boolean existTrip = false, addedOk = false;
+        boolean existTrip;
         int resul;
 
         //endregion DEFINITION VARIABLES
@@ -257,7 +394,7 @@ public class ConfigControlCls {
      */
     public int checkHotel(String hotelName) {
         //region DEFINITION VARIABLES
-        boolean existHotel = false;
+        boolean existHotel;
         int resul;
 
         //endregion DEFINITION VARIABLES
@@ -285,6 +422,5 @@ public class ConfigControlCls {
     }
 
     //endregion METHODS CHECKS
-
 
 }

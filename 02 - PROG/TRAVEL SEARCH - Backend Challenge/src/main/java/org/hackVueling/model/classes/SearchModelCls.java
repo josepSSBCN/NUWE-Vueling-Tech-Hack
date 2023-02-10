@@ -16,8 +16,6 @@ public class SearchModelCls {
     private static SearchModelCls instance;
     private static PreparedStatement ps;
     private static ResultSet rs;
-    private Connect connector;
-
 
     //endregion ATTRIBUTES
 
@@ -56,38 +54,38 @@ public class SearchModelCls {
 
         //region ACTIONS
         // INIT
-        connector = new Connect();
         cityNameIn = cityNameIn.toUpperCase();
-        // Cheks
-        if (cityNameIn.isEmpty()) {
-            return tripsIdList;
+
+        // CHECKS
+        if (!cityNameIn.isEmpty()) {
+
+            //region FIND ON `air_trip_cities_vw`
+            // Prepare & execute the query
+            sql1 = "select id_airTrip_citiesairtrip from air_trip_cities_vw where upper(name_cities) like \"%" + cityNameIn + "%\"";
+            ps = Connect.getConnectionBasic().prepareStatement(sql1);
+            rs = ps.executeQuery();
+
+            // Read results
+            while (rs.next()) {
+                tripsIdList.add(rs.getShort("id_airTrip_citiesairtrip"));
+            }
+
+            //endregion FIND ON `air_trip_cities_vw`
+
+            //region FIND ON `air_trip_flights_vw`
+            // Prepare & execute the query
+            sql1 = "select id_airTrip_flightsairtrip from air_trip_flights_vw where upper(name_cities) like \"%" + cityNameIn + "%\"";
+            ps = Connect.getConnectionBasic().prepareStatement(sql1);
+            rs = ps.executeQuery();
+
+            // Read results
+            while (rs.next()) {
+                tripsIdList.add(rs.getShort("id_airTrip_flightsairtrip"));
+            }
+
+            //endregion FIND ON `air_trip_flights_vw`
+
         }
-
-        //region FIND ON `air_trip_cities_vw`
-        // Prepare & execute the query
-        sql1 = "select id_airTrip_citiesairtrip from air_trip_cities_vw where upper(name_cities) like \"%" + cityNameIn + "%\"";
-        ps = connector.connectionBasic().prepareStatement(sql1);
-        rs = ps.executeQuery();
-
-        // Read results
-        while (rs.next()) {
-            tripsIdList.add(rs.getShort("id_airTrip_citiesairtrip"));
-        }
-
-        //endregion FIND ON `air_trip_cities_vw`
-
-        //region FIND ON `air_trip_flights_vw`
-        // Prepare & execute the query
-        sql1 = "select id_airTrip_flightsairtrip from air_trip_flights_vw where upper(name_cities) like \"%" + cityNameIn + "%\"";
-        ps = connector.connectionBasic().prepareStatement(sql1);
-        rs = ps.executeQuery();
-
-        // Read results
-        while (rs.next()) {
-            tripsIdList.add(rs.getShort("id_airTrip_flightsairtrip"));
-        }
-
-        //endregion FIND ON `air_trip_flights_vw`
 
         //endregion ACTIONS
 
@@ -114,38 +112,37 @@ public class SearchModelCls {
 
         //region ACTIONS
         // INIT
-        connector = new Connect();
         cityNameIn = cityNameIn.toUpperCase();
-        // Cheks
-        if (cityNameIn.isEmpty()) {
-            return tripsIdList;
+
+        // CHECKS
+        if (!cityNameIn.isEmpty()) {
+            //region FIND ON `land_trip_cities_vw`
+            // Prepare & execute the query
+            sql1 = "select id_landTrip_citieslandtrip from land_trip_cities_vw where upper(name_cities) like \"%" + cityNameIn + "%\"";
+            ps = Connect.getConnectionBasic().prepareStatement(sql1);
+            rs = ps.executeQuery();
+
+            // Read results
+            while (rs.next()) {
+                tripsIdList.add(rs.getShort("id_landTrip_citieslandtrip"));
+            }
+
+            //endregion FIND ON `land_trip_cities_vw`
+
+            //region FIND ON `land_trip_hotels_vw`
+            // Prepare & execute the query
+            sql1 = "select id_landTrip_hotelslandtrip from land_trip_hotels_vw where upper(name_cities) like \"%" + cityNameIn + "%\"";
+            ps = Connect.getConnectionBasic().prepareStatement(sql1);
+            rs = ps.executeQuery();
+
+            // Read results
+            while (rs.next()) {
+                tripsIdList.add(rs.getShort("id_landTrip_hotelslandtrip"));
+            }
+
+            //endregion FIND ON `land_trip_hotels_vw`
+
         }
-
-        //region FIND ON `land_trip_cities_vw`
-        // Prepare & execute the query
-        sql1 = "select id_landTrip_citieslandtrip from land_trip_cities_vw where upper(name_cities) like \"%" + cityNameIn + "%\"";
-        ps = connector.connectionBasic().prepareStatement(sql1);
-        rs = ps.executeQuery();
-
-        // Read results
-        while (rs.next()) {
-            tripsIdList.add(rs.getShort("id_landTrip_citieslandtrip"));
-        }
-
-        //endregion FIND ON `land_trip_cities_vw`
-
-        //region FIND ON `land_trip_hotels_vw`
-        // Prepare & execute the query
-        sql1 = "select id_landTrip_hotelslandtrip from land_trip_hotels_vw where upper(name_cities) like \"%" + cityNameIn + "%\"";
-        ps = connector.connectionBasic().prepareStatement(sql1);
-        rs = ps.executeQuery();
-
-        // Read results
-        while (rs.next()) {
-            tripsIdList.add(rs.getShort("id_landTrip_hotelslandtrip"));
-        }
-
-        //endregion FIND ON `land_trip_hotels_vw`
 
         //endregion ACTIONS
 
@@ -171,10 +168,7 @@ public class SearchModelCls {
 
 
         //region ACTIONS
-        // INIT
-        connector = new Connect();
-
-        // PREPARE 'WHERE' PART OF QUERYS
+        // PREPARE 'WHERE' PART OF QUERY
         for (int i : airTripsIdList) {
             sql11 = sql11.concat(String.format("Id_airTrip = %s OR ", i));
             sql21 = sql21.concat(String.format("id_airTrip_flightsairtrip = %s OR ", i));
@@ -187,10 +181,10 @@ public class SearchModelCls {
         //region airTrip
         // PREPARE & EXECUTE QUERY
         sql1 = "select * from airtrip where " + sql11;
-        ps = connector.connectionBasic().prepareStatement(sql1);
+        ps = Connect.getConnectionBasic().prepareStatement(sql1);
         rs = ps.executeQuery();
 
-        // READ LANDTRIP TABLE RESULTS
+        // READ LAND TRIP TABLE RESULTS
         while (rs.next()) {
             AirTrip airTrip = new AirTrip(
                     rs.getShort("Id_airTrip"),
@@ -208,7 +202,7 @@ public class SearchModelCls {
         //region air_trip_flights_vw VIEW
         // PREPARE & EXECUTE QUERY
         sql1 = "select * from air_trip_flights_vw where " + sql21;
-        ps = connector.connectionBasic().prepareStatement(sql1);
+        ps = Connect.getConnectionBasic().prepareStatement(sql1);
         rs = ps.executeQuery();
 
         // READ RESULTS
@@ -232,7 +226,7 @@ public class SearchModelCls {
         // Prepare & execute the query
         sql1 = "select * from air_trip_cities_vw where " + sql31;
         sql1 = sql1.substring(0, sql1.length() - 4);
-        ps = connector.connectionBasic().prepareStatement(sql1);
+        ps = Connect.getConnectionBasic().prepareStatement(sql1);
         rs = ps.executeQuery();
 
         // READ RESULTS
@@ -274,10 +268,7 @@ public class SearchModelCls {
 
 
         //region ACTIONS
-        // INIT
-        connector = new Connect();
-
-        // PREPARE WHERE PART OF QUERYS
+        // PREPARE WHERE PART OF QUERY
         for (int i : landTripsIdList) {
             sql11 = sql11.concat(String.format("Id_landTrip = %s OR ", i));
             sql21 = sql21.concat(String.format("id_landTrip_hotelslandtrip = %s OR ", i));
@@ -288,12 +279,12 @@ public class SearchModelCls {
         sql31 = sql31.substring(0, sql31.length() - 4);
 
         //region landtrip
-        // PREPARE & EXECUTE LANDTRIP TABLE QUERY
+        // PREPARE & EXECUTE LAND TRIP TABLE QUERY
         sql1 = "select * from landtrip where " + sql11;
-        ps = connector.connectionBasic().prepareStatement(sql1);
+        ps = Connect.getConnectionBasic().prepareStatement(sql1);
         rs = ps.executeQuery();
 
-        // READ LANDTRIP TABLE RESULTS
+        // READ LAND TRIP TABLE RESULTS
         while (rs.next()) {
             LandTrip landTrip = new LandTrip(
                     rs.getShort("Id_landTrip"),
@@ -311,7 +302,7 @@ public class SearchModelCls {
         //region land_trip_hotels_vw VIEW
         // PREPARE & EXECUTE QUERY
         sql1 = "select * from land_trip_hotels_vw where " + sql21;
-        ps = connector.connectionBasic().prepareStatement(sql1);
+        ps = Connect.getConnectionBasic().prepareStatement(sql1);
         rs = ps.executeQuery();
 
         // READ RESULTS
@@ -336,7 +327,7 @@ public class SearchModelCls {
         // PREPARE & EXECUTE VIEW QUERY
         sql1 = "select * from land_trip_cities_vw where " + sql31;
         sql1 = sql1.substring(0, sql1.length() - 4);
-        ps = connector.connectionBasic().prepareStatement(sql1);
+        ps = Connect.getConnectionBasic().prepareStatement(sql1);
         rs = ps.executeQuery();
 
         // READ RESULTS
@@ -379,14 +370,13 @@ public class SearchModelCls {
 
         //region ACTIONS
         // INIT
-        connector = new Connect();
         cityNameIn = cityNameIn.toUpperCase();
 
-        // Cheks
+        // Checks
         if (!cityNameIn.isEmpty()) {
             // PREPARE & EXECUTE QUERY
             sql1 = "select * from cities where upper(name_cities) like \"%" + cityNameIn + "%\"";
-            ps = connector.connectionBasic().prepareStatement(sql1);
+            ps = Connect.getConnectionBasic().prepareStatement(sql1);
             rs = ps.executeQuery();
 
             // READ RESULTS

@@ -108,7 +108,7 @@ class SearchControlClsTest {
     }
 
     /**
-     * Test how show, empty lists & null lists.
+     * Test how show, empty lists and null lists.
      */
     @org.junit.jupiter.api.Test
     void resultConstruct() {

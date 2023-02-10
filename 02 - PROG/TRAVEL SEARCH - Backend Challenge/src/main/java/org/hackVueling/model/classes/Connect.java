@@ -9,6 +9,11 @@ import java.sql.SQLException;
  */
 public class Connect {
     //region ATTRIBUTES
+
+    private static Connect instance;
+    private static Connection connectionBasic;
+    private static Connection connectionAdmin;
+
     private final static String url = "jdbc:mysql://localhost:3306/opatravelagency";
     private final static String userBasic = "opabasic";
     private final static String userAdmin = "opaadministrador";
@@ -18,32 +23,47 @@ public class Connect {
     //endregion ATTRIBUTES
 
 
+    //region CONSTRUCTOR
+    private Connect() {
+
+    }
+
+    public static Connect getInstance() {
+        if (instance == null) {
+            instance = new Connect();
+        }
+        return instance;
+    }
+
+    //endregion CONSTRUCTOR
+
+
     //region METHODS
 
     /**
-     * Method to do a connection with basic user.
+     * Method to do a connection with basic user level, if that is null is created it.
+     *
      * @return The connection.
      * @throws SQLException Throws if some problem with SQL connection.
      */
-    public Connection connectionBasic() throws SQLException {
-        Connection connect;
-
-        connect = DriverManager.getConnection(url, userBasic, passBasic);
-
-        return connect;
+    public static Connection getConnectionBasic() throws SQLException {
+        if (connectionBasic == null) {
+            connectionBasic = DriverManager.getConnection(url, userBasic, passBasic);
+        }
+        return connectionBasic;
     }
 
     /**
      * Method to do a connection with admin user.
+     *
      * @return The connection.
      * @throws SQLException Throws if some problem with SQL connection.
      */
-    public Connection connectionAdmin() throws SQLException {
-        Connection connect;
-
-        connect = DriverManager.getConnection(url, userAdmin, passAdmin);
-
-        return connect;
+    public static Connection getconnectionAdmin() throws SQLException {
+        if (connectionAdmin == null) {
+            connectionAdmin = DriverManager.getConnection(url, userAdmin, passAdmin);
+        }
+        return connectionAdmin;
     }
 
     //endregion METHODS

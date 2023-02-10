@@ -5,7 +5,13 @@ package org.hackVueling.model.dataStructrure;
  */
 public class City {
     //region ATTRIBUTES
+    /**
+     * City's id.
+     */
     private Short id;
+    /**
+     * City's name.
+     */
     private String name;
 
     //endregion ATTRIBUTES

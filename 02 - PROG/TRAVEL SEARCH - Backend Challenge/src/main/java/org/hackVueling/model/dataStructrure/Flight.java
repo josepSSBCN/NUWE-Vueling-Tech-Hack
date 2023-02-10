@@ -7,9 +7,21 @@ import java.sql.Time;
  */
 public class Flight {
     //region ATTRIBUTES
+    /**
+     * Flight's id.
+     */
     private short id;
+    /**
+     * Id of departure city.
+     */
     private short idCity;
+    /**
+     * Departure city's name.
+     */
     private String cityDeparture;
+    /**
+     * Departure time.
+     */
     private Time departureTime;
 
     //endregion ATTRIBUTES

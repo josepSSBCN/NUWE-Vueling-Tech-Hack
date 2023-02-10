@@ -148,4 +148,33 @@ class ConfigModelClsTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    void getCity() {
+        City result = new City();
+
+        try {
+            result = ConfigModelCls.getInstance().getCity("Barcelona");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
+    void getAirTrip() {
+        AirTrip airTrip = new AirTrip();
+        AirTrip airTrip2 = new AirTrip();
+        airTrip.setName("Catalonia Exclusive");
+        airTrip2.setName("Catalonia Exclusive");
+
+        try {
+            assertNotEquals(null, ConfigModelCls.getInstance().getAirTrip(airTrip));
+            airTrip2 = new AirTrip(ConfigModelCls.getInstance().getAirTrip(airTrip));
+
+            System.out.println(airTrip2.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
